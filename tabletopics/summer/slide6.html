@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toastmasters Table Topics - Question 5</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://mapsandmerlot.b-cdn.net/wp-content/uploads/2017/08/1.-Bora-Bora-1024x582.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .question-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            max-width: 80%;
+            transform: translateY(0);
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .home-button {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #8B5CF6;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .home-button:hover {
+            transform: scale(1.1);
+            background-color: #8B5CF6;
+            color: white;
+        }
+        .question-number {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background-color: #8B5CF6;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .nav-button {
+            position: absolute;
+            bottom: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #8B5CF6;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .nav-button:hover {
+            transform: scale(1.1);
+            background-color: #8B5CF6;
+            color: white;
+        }
+        .prev-button {
+            right: 110px;
+        }
+    </style>
+</head>
+<body>
+<div class="slide flex flex-col items-center justify-center">
+    <div class="question-container">
+        <h2 class="text-4xl font-bold text-purple-600 mb-6 text-center">If you could go anywhere right now for a summer vacation, where would you choose?</h2>
+    </div>
+
+    <div class="question-number">5</div>
+
+    <a href="slide1.html" class="home-button">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <a href="slide5.html" class="nav-button prev-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+</div>
+
+<script>
+    // Add interactive elements
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Home' || event.key === 'Escape') {
+            window.location.href = 'slide1.html';
+        } else if (event.key === 'ArrowLeft') {
+            window.location.href = 'slide5.html';
+        }
+    });
+</script>
+</body>
+</html>
