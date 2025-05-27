@@ -7,19 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <script src="common.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Poppins', sans-serif;
-        }
+        /* Slide-specific styles */
         .slide {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
             background: linear-gradient(135deg, #87CEEB, #0078c8);
-            overflow: hidden;
         }
         .sun {
             position: absolute;
@@ -165,6 +158,12 @@
             75% { transform: rotate(-5deg); }
             100% { transform: rotate(0deg); }
         }
+        .fullscreen-button {
+            color: #0078c8;
+        }
+        .fullscreen-button:hover {
+            background-color: #0078c8;
+        }
     </style>
 </head>
 <body>
@@ -184,52 +183,47 @@
     </div>
 
     <div class="flex justify-center items-center mb-16 z-10">
-        <div class="number-button" onclick="goToSlide(2)" style="background-image: linear-gradient(rgba(239, 68, 68, 0.5), rgba(239, 68, 68, 0.7)), url('https://hips.hearstapps.com/hmg-prod/images/family-at-the-beach-royalty-free-image-1680117145.jpg')">
+        <div class="number-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(2)" style="background-image: linear-gradient(rgba(239, 68, 68, 0.5), rgba(239, 68, 68, 0.7)), url('https://hips.hearstapps.com/hmg-prod/images/family-at-the-beach-royalty-free-image-1680117145.jpg')">
             <span>1</span>
         </div>
 
-        <div class="number-button" onclick="goToSlide(3)" style="background-image: linear-gradient(rgba(245, 158, 11, 0.5), rgba(245, 158, 11, 0.7)), url('https://miro.medium.com/v2/resize:fit:1200/1*salDf3Mxl7kmAe9ovXt2tw.jpeg')">
+        <div class="number-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(3)" style="background-image: linear-gradient(rgba(245, 158, 11, 0.5), rgba(245, 158, 11, 0.7)), url('https://miro.medium.com/v2/resize:fit:1200/1*salDf3Mxl7kmAe9ovXt2tw.jpeg')">
             <span>2</span>
         </div>
 
-        <div class="number-button" onclick="goToSlide(4)" style="background-image: linear-gradient(rgba(16, 185, 129, 0.5), rgba(16, 185, 129, 0.7)), url('https://cms-tc.pbskids.org/parents/new-ideas-and-activities-to-try-this-summer.jpg')">
+        <div class="number-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(4)" style="background-image: linear-gradient(rgba(16, 185, 129, 0.5), rgba(16, 185, 129, 0.7)), url('https://cms-tc.pbskids.org/parents/new-ideas-and-activities-to-try-this-summer.jpg')">
             <span>3</span>
         </div>
 
-        <div class="number-button" onclick="goToSlide(5)" style="background-image: linear-gradient(rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.7)), url('https://www.ultramodern.com/wp-content/uploads/2019/07/heat.png')">
+        <div class="number-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(5)" style="background-image: linear-gradient(rgba(59, 130, 246, 0.5), rgba(59, 130, 246, 0.7)), url('https://www.ultramodern.com/wp-content/uploads/2019/07/heat.png')">
             <span>4</span>
         </div>
 
-        <div class="number-button" onclick="goToSlide(6)" style="background-image: linear-gradient(rgba(139, 92, 246, 0.5), rgba(139, 92, 246, 0.7)), url('https://mapsandmerlot.b-cdn.net/wp-content/uploads/2017/08/1.-Bora-Bora-1024x582.jpg')">
+        <div class="number-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(6)" style="background-image: linear-gradient(rgba(139, 92, 246, 0.5), rgba(139, 92, 246, 0.7)), url('https://mapsandmerlot.b-cdn.net/wp-content/uploads/2017/08/1.-Bora-Bora-1024x582.jpg')">
             <span>5</span>
         </div>
     </div>
 
     <p class="text-white text-xl opacity-90 text-center max-w-xl z-10 font-semibold" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Click on a number to reveal your table topics question</p>
+    
+    <button class="fullscreen-button" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+        <i class="fas fa-expand" id="fullscreen-icon"></i>
+    </button>
 </div>
 
 <script>
-    function goToSlide(slideNumber) {
-        window.location.href = `slide${slideNumber}.html`;
-    }
-
     // Preload the next slides
-    window.onload = function() {
+    window.addEventListener('load', function() {
         for(let i = 2; i <= 6; i++) {
             const link = document.createElement('link');
             link.rel = 'prefetch';
             link.href = `slide${i}.html`;
             document.head.appendChild(link);
         }
-
-        // Add keyboard navigation
-        document.addEventListener('keydown', function(event) {
-            if (event.key >= '1' && event.key <= '5') {
-                const slideNumber = parseInt(event.key) + 1;
-                goToSlide(slideNumber);
-            }
-        });
-    }
+    });
+    
+    // Setup keyboard navigation with slide numbers enabled
+    setupKeyboardNavigation({ slideNumbers: true });
 </script>
 </body>
 </html>

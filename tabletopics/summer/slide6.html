@@ -7,95 +7,35 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <script src="common.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Poppins', sans-serif;
-        }
+        /* Slide-specific styles */
         .slide {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
             background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://mapsandmerlot.b-cdn.net/wp-content/uploads/2017/08/1.-Bora-Bora-1024x582.jpg');
             background-size: cover;
             background-position: center;
         }
-        .question-container {
-            background-color: rgba(255, 255, 255, 0.85);
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            padding: 2rem;
-            max-width: 80%;
-            transform: translateY(0);
-            animation: float 4s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
         .home-button {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            background-color: rgba(255, 255, 255, 0.9);
             color: #8B5CF6;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
         }
         .home-button:hover {
-            transform: scale(1.1);
             background-color: #8B5CF6;
-            color: white;
         }
         .question-number {
-            position: absolute;
-            top: 30px;
-            right: 30px;
             background-color: #8B5CF6;
-            color: white;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .nav-button {
-            position: absolute;
-            bottom: 30px;
-            background-color: rgba(255, 255, 255, 0.9);
             color: #8B5CF6;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
         }
         .nav-button:hover {
-            transform: scale(1.1);
             background-color: #8B5CF6;
-            color: white;
         }
-        .prev-button {
-            right: 110px;
+        .fullscreen-button {
+            color: #8B5CF6;
+        }
+        .fullscreen-button:hover {
+            background-color: #8B5CF6;
         }
     </style>
 </head>
@@ -107,24 +47,22 @@
 
     <div class="question-number">5</div>
 
-    <a href="slide1.html" class="home-button">
+    <button class="home-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(1)">
         <i class="fas fa-home"></i>
-    </a>
+    </button>
 
-    <a href="slide5.html" class="nav-button prev-button">
+    <button class="nav-button prev-button" onclick="checkFullscreenBeforeNavigate(); goToSlide(5)">
         <i class="fas fa-arrow-left"></i>
-    </a>
+    </button>
+    
+    <button class="fullscreen-button" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+        <i class="fas fa-expand" id="fullscreen-icon"></i>
+    </button>
 </div>
 
 <script>
-    // Add interactive elements
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Home' || event.key === 'Escape') {
-            window.location.href = 'slide1.html';
-        } else if (event.key === 'ArrowLeft') {
-            window.location.href = 'slide5.html';
-        }
-    });
+    // Setup keyboard navigation (last slide, no next)
+    setupKeyboardNavigation({ prevSlide: 'slide5.html' });
 </script>
 </body>
 </html>
