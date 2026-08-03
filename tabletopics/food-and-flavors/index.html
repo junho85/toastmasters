@@ -372,6 +372,7 @@
     else if (e.key === 'Home' || c === 'Home') go(0);
     else if (e.key === 'End' || c === 'End') go(total - 1);
     else if (e.key.toLowerCase() === 'p' || c === 'KeyP') { e.preventDefault(); togglePresenter(); }
+    else if (e.key === 'Escape' || c === 'Escape') { if (presWin && !presWin.closed) { e.preventDefault(); togglePresenter(); } }
     else if (e.key.toLowerCase() === 'f' || c === 'KeyF') { e.preventDefault(); if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
   }
   window.addEventListener('keydown', onKey);
