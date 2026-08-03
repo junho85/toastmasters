@@ -282,7 +282,7 @@
   <button class="next" id="navNext" tabindex="-1" aria-label="Next slide"></button>
 </nav>
 <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
-<div class="hint">← → or Space · F for fullscreen</div>
+<div class="hint">← → navigate · P presenter · F fullscreen</div>
 
 <script>
   const slides = Array.from(document.querySelectorAll('.slide'));
@@ -290,6 +290,17 @@
   const counter = document.getElementById('counter');
   const total = slides.length;
   let i = 0;
+
+  // Host script — presenter notes, one per slide (same order as sections above).
+  const NOTES = [
+    "<b>Opening:</b> Welcome to today's Table Topics. I'm June, your host. Our theme is <b>Food &amp; Flavors</b> — food isn't just fuel, it's memory, comfort, and culture. Five short questions; answer in English, keep it personal, don't worry about mistakes. <span class='cue'>[I'll start us off, then we go around.]</span>",
+    "<b>Lead-in:</b> Let's start light — what's your comfort food when you're tired or stressed?<br><b>Follow-up:</b> What is it about that dish — the taste, or the memory?<br><span class='cue'>Bridge → \"Mmm, now I'm getting hungry. Let's move on.\"</span>",
+    "<b>Lead-in:</b> Question two is about change — a food you hated as a kid but love now, or the other way around?<br><b>Follow-up:</b> What changed — your taste, or the food itself?<br><span class='cue'>Bridge → \"It's funny how our taste grows up with us.\"</span>",
+    "<b>Lead-in:</b> Now let's get personal — the most memorable meal you've ever had, and who were you with?<br><b>Follow-up:</b> What made it special — the food, the place, or the people?<br><span class='cue'>Bridge → \"Food and people always go together.\"</span>",
+    "<b>Lead-in:</b> An easy one — are you more of a cook or an eater? How are your kitchen skills?<br><b>Follow-up:</b> What's the one dish you can actually make?<br><span class='cue'>Bridge → \"We're all excellent eaters. Last question.\"</span>",
+    "<b>Lead-in:</b> The big final question — only one country's food for the rest of your life. Which, and why?<br><b>Follow-up:</b> Would you miss any other cuisine too much?<br><span class='cue'>Bridge → into the closing.</span>",
+    "<b>Closing:</b> That's all five questions. Thank you all for sharing — some delicious stories today. Great job, everyone. Let's do this again next time. Enjoy your lunch! <span class='cue'>[Mention the next meeting date.]</span>"
+  ];
 
   slides.forEach((s, n) => {
     const b = document.createElement('button');
@@ -305,6 +316,7 @@
     slides.forEach((s, n) => s.classList.toggle('active', n === i));
     dots.forEach((d, n) => d.setAttribute('aria-current', n === i ? 'true' : 'false'));
     counter.textContent = pad(i) + ' / ' + String(total).padStart(2, '0');
+    updatePresenter();
   }
   function go(n){ i = Math.max(0, Math.min(total - 1, n)); render(); }
   function next(){ go(i + 1); }
@@ -312,15 +324,57 @@
 
   document.getElementById('navNext').addEventListener('click', next);
   document.getElementById('navPrev').addEventListener('click', prev);
-  window.addEventListener('keydown', (e) => {
-    if (['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)) { e.preventDefault(); next(); }
-    else if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
-    else if (e.key === 'Home') { go(0); }
-    else if (e.key === 'End') { go(total - 1); }
-    else if (e.key === 'f' || e.key === 'F') {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-      else document.exitFullscreen?.();
-    }
-  });
+
+  // ---- Presenter window: a separate window, NOT captured when you share only the slides tab ----
+  let presWin = null, startMs = null;
+  function fmt(ms){ const s = Math.max(0, Math.floor(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); }
+  function togglePresenter(){ if (presWin && !presWin.closed) { presWin.close(); presWin = null; return; } openPresenter(); }
+  function openPresenter(){
+    if (presWin && !presWin.closed) { presWin.focus(); return; }
+    presWin = window.open('', 'ttopics_presenter', 'width=780,height=900');
+    if (!presWin) { alert('Pop-up blocked. Allow pop-ups for this page, then press P again.'); return; }
+    presWin.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Presenter Notes (private)</title><style>'
+      + 'body{margin:0;background:#181310;color:#f4ecdf;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;padding:18px 24px;}'
+      + '.top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #e5714a;padding-bottom:8px;margin-bottom:14px;}'
+      + '#ptimer{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;color:#f0805a;}#pcount{font-size:18px;opacity:.7;}'
+      + '#ptitle{color:#f0805a;font-size:14px;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;font-weight:800;}'
+      + '#pnote{font-size:22px;line-height:1.6;}#pnote .cue{color:#f0805a;font-weight:700;}#pnote b{color:#fff;}'
+      + '#pnext{margin-top:20px;padding-top:12px;border-top:1px solid #3a2f27;opacity:.65;font-size:16px;}'
+      + '.btns{margin-top:18px;}button{background:#2a221c;color:#fff;border:1px solid #4a3d33;padding:9px 16px;border-radius:8px;font-size:15px;margin-right:8px;cursor:pointer;}'
+      + '</style></head><body><div class="top"><div id="ptimer">00:00</div><div id="pcount"></div></div>'
+      + '<div id="ptitle"></div><div id="pnote"></div><div id="pnext"></div>'
+      + '<div class="btns"><button id="pp">&#8249; Prev</button><button id="pn">Next &#8250;</button><button id="pr">Reset timer</button></div>'
+      + '</body></html>');
+    presWin.document.close();
+    const d = presWin.document;
+    d.getElementById('pp').onclick = () => go(i - 1);
+    d.getElementById('pn').onclick = () => go(i + 1);
+    d.getElementById('pr').onclick = () => { startMs = Date.now(); };
+    d.addEventListener('keydown', onKey);
+    if (!startMs) startMs = Date.now();
+    updatePresenter();
+  }
+  function updatePresenter(){
+    if (!presWin || presWin.closed) return;
+    const d = presWin.document, c = d.getElementById('pcount'); if (!c) return;
+    c.textContent = 'Slide ' + (i + 1) + ' / ' + total;
+    d.getElementById('ptitle').textContent = slides[i].dataset.label || ('Slide ' + (i + 1));
+    d.getElementById('pnote').innerHTML = NOTES[i] || '';
+    d.getElementById('pnext').innerHTML = (i + 1 < total) ? ('▶ Next: ' + (slides[i+1].dataset.label || ('Slide ' + (i+2)))) : '— last slide —';
+  }
+  setInterval(function(){ if (presWin && !presWin.closed && startMs){ const t = presWin.document.getElementById('ptimer'); if (t) t.textContent = fmt(Date.now() - startMs); } }, 500);
+
+  // Shared key handler — uses e.code (physical key) so shortcuts work even when the IME is in Korean mode.
+  function onKey(e){
+    const c = e.code;
+    if (['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key) || c === 'Space' || c === 'PageDown') { e.preventDefault(); next(); }
+    else if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key) || c === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home' || c === 'Home') go(0);
+    else if (e.key === 'End' || c === 'End') go(total - 1);
+    else if (e.key.toLowerCase() === 'p' || c === 'KeyP') { e.preventDefault(); togglePresenter(); }
+    else if (e.key.toLowerCase() === 'f' || c === 'KeyF') { e.preventDefault(); if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+  }
+  window.addEventListener('keydown', onKey);
+
   render();
 </script>
